@@ -9,6 +9,7 @@ By https://github.com/trackme518 :
 * fixed bug on Linux with OSC broadcast
 * exposed sender ip address with new function `.getIP()` - returns IP as a String (ie "168.0.4.2")
 * modified the library so you can have multiple apps listening on the same port (currently working for UdpServer version only )
+* changed return type of send() function from void to boolean to indicate success / failure
 
 ```
 public String getIP( ) {

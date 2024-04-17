@@ -1,7 +1,7 @@
 oscp5
 =====
 
-An Open Sound Control (OSC) implementation for java and processing.org
+An Open Sound Control (OSC) implementation for java and processing.org. Download latest .zip from [releases](https://github.com/trackme518/oscp5/releases).
 
 ## Updates
 By https://github.com/trackme518 :

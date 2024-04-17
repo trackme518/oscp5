@@ -108,6 +108,8 @@ public class OscP5 implements Observer {
 	private Transmitter transmit;
 	private Object parent;
 
+	UdpServer udpServerInstance;
+
 	/**
 	 * default constructor, starts an UDP server with maximum packet size of 1536 bytes.
 	 */
@@ -161,6 +163,7 @@ public class OscP5 implements Observer {
 			} else {
 				UdpServer udpserver = NetP5.createUdpServer( _myOscProperties.host( ) , _myOscProperties.listeningPort( ) , _myOscProperties.datagramSize( ) );
 				udpserver.addObserver( this );
+				udpServerInstance = udpserver;
 				transmit = udpserver;
 			}
 			break;
@@ -183,6 +186,13 @@ public class OscP5 implements Observer {
 			break;
 		}
 
+	}
+
+	public boolean isServerRunning(){
+		if(udpServerInstance != null){
+			return udpServerInstance.isRunning();
+		}
+		return false;
 	}
 
 	public void update( Observable ob , Object map ) {

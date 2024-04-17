@@ -63,9 +63,13 @@ public final class UdpServer extends Observable implements Transmitter {
 		server = new InternalServer( theHost , thePort , theDatagramSize );
 	}
 
-	//public boolean isRunning(){
-	//	return server.thread.isAlive();
-	//}
+	public boolean isRunning(){
+		if(server != null){
+			return server.isRunning();
+		}
+		return false;
+	}
+
 
 	public boolean close( ) {
 		try {
@@ -123,6 +127,13 @@ public final class UdpServer extends Observable implements Transmitter {
 			size = theDatagramSize;
 			thread = ( new Thread( this ) );
 			thread.start( );
+		}
+
+		public boolean isRunning(){
+			if( thread != null ){
+				return thread.isAlive();
+			}
+			return false;
 		}
 
 		public void run( ) {

@@ -6,9 +6,9 @@ An Open Sound Control (OSC) implementation for java and processing.org
 ## Updates
 By https://github.com/trackme518 :
 
-* fixed bug on Linux with OSC broadcast (in UdpServer.java)
-* exposed sender ip address with new function .getIP() - returns IP as a String (ie "168.0.4.2")
-
+* fixed bug on Linux with OSC broadcast (in `UdpServer.java`)
+* exposed sender ip address with new function `.getIP()` - returns IP as a String (ie "168.0.4.2")
+* modified the library so you can have multiple apps listening on the same port with `channel.socket( ).setReuseAddress(true);` (currently working for UdpServer version only )
 
 ```
 public String getIP( ) {

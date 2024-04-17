@@ -307,17 +307,19 @@ public class OscP5 implements Observer {
 		return false;
 	}
 
-	public static void flush( final NetAddress theNetAddress , final byte[] theBytes ) {
+	public static boolean flush( final NetAddress theNetAddress , final byte[] theBytes ) {
 		DatagramSocket mySocket;
 		try {
 			mySocket = new DatagramSocket( );
 			DatagramPacket myPacket = new DatagramPacket( theBytes , theBytes.length , theNetAddress.inetaddress( ) , theNetAddress.port( ) );
 			mySocket.send( myPacket );
+			return true;
 		} catch ( SocketException e ) {
 			LOGGER.warning( "OscP5.openSocket, can't create socket " + e.getMessage( ) );
 		} catch ( IOException e ) {
 			LOGGER.warning( "OscP5.openSocket, can't create multicastSocket " + e.getMessage( ) );
 		}
+		return false;
 	}
 
 	/**
@@ -486,30 +488,35 @@ public class OscP5 implements Observer {
 	 * your needs.
 	 */
 
-	public void send( final OscPacket thePacket ) {
-		transmit.send( thePacket.getBytes( ) );
+	public boolean send( final OscPacket thePacket ) {
+		return transmit.send( thePacket.getBytes( ) );
 	}
 
-	public void send( final String theAddrPattern , final Object ... theArguments ) {
-		transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) );
+	public boolean send( final String theAddrPattern , final Object ... theArguments ) {
+		return transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) );
 	}
 
-	public void send( final NetAddress theNetAddress , String theAddrPattern , Object ... theArguments ) {
-		transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) , theNetAddress.address( ) , theNetAddress.port( ) );
+	public boolean send( final NetAddress theNetAddress , String theAddrPattern , Object ... theArguments ) {
+		return transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) , theNetAddress.address( ) , theNetAddress.port( ) );
 	}
 
-	public void send( final NetAddress theNetAddress , final OscPacket thePacket ) {
-		transmit.send( thePacket.getBytes( ) , theNetAddress.address( ) , theNetAddress.port( ) );
+	public boolean send( final NetAddress theNetAddress , final OscPacket thePacket ) {
+		return transmit.send( thePacket.getBytes( ) , theNetAddress.address( ) , theNetAddress.port( ) );
 	}
 
-	public void send( final List< NetAddress > theList , String theAddrPattern , Object ... theArguments ) {
-		send( theList , new OscMessage( theAddrPattern , theArguments ) );
+	public boolean send( final List< NetAddress > theList , String theAddrPattern , Object ... theArguments ) {
+		return send( theList , new OscMessage( theAddrPattern , theArguments ) );
 	}
 
-	public void send( final List< NetAddress > theList , final OscPacket thePacket ) {
+	public boolean send( final List< NetAddress > theList , final OscPacket thePacket ) {
+		boolean result = true;
 		for ( NetAddress addr : theList ) {
-			transmit.send( thePacket.getBytes( ) , addr.address( ) , addr.port( ) );
+			boolean _test = transmit.send( thePacket.getBytes( ) , addr.address( ) , addr.port( ) );
+			if(!_test){
+				result = false;
+			}
 		}
+		return result;
 	}
 
 	public boolean send( final OscPacket thePacket , final Object theRemoteSocket ) {
@@ -604,13 +611,13 @@ public class OscP5 implements Observer {
 		// _myOscNetManager.send( theAddress , thePort , theAddrPattern , theArguments );
 	}
 
-	public void send( final TcpClient theClient , final OscPacket thePacket ) {
+	//public void send( final TcpClient theClient , final OscPacket thePacket ) {
 		/* TODO */
-	}
+	//}
 
-	public void send( final TcpClient theClient , final String theAddrPattern , final Object ... theArguments ) {
-		send( theClient , new OscMessage( theAddrPattern , theArguments ) );
-	}
+	//public void send( final TcpClient theClient , final String theAddrPattern , final Object ... theArguments ) {
+	//	send( theClient , new OscMessage( theAddrPattern , theArguments ) );
+	//}
 
 	public boolean send( final String theHost , final int thePort , final OscPacket thePacket ) {
 		return transmit.send( thePacket.getBytes( ) , theHost , thePort );
@@ -624,16 +631,16 @@ public class OscP5 implements Observer {
 	 * a static method to send an OscMessage straight out of the box without having to instantiate
 	 * oscP5.
 	 */
-	public static void flush( final NetAddress theNetAddress , final OscMessage theOscMessage ) {
-		flush( theNetAddress , theOscMessage.getBytes( ) );
+	public static boolean flush( final NetAddress theNetAddress , final OscMessage theOscMessage ) {
+		return flush( theNetAddress , theOscMessage.getBytes( ) );
 	}
 
-	public static void flush( final NetAddress theNetAddress , final OscPacket theOscPacket ) {
-		flush( theNetAddress , theOscPacket.getBytes( ) );
+	public static boolean flush( final NetAddress theNetAddress , final OscPacket theOscPacket ) {
+		return flush( theNetAddress , theOscPacket.getBytes( ) );
 	}
 
-	public static void flush( final NetAddress theNetAddress , final String theAddrPattern , final Object ... theArguments ) {
-		flush( theNetAddress , ( new OscMessage( theAddrPattern , theArguments ) ).getBytes( ) );
+	public static boolean flush( final NetAddress theNetAddress , final String theAddrPattern , final Object ... theArguments ) {
+		return flush( theNetAddress , ( new OscMessage( theAddrPattern , theArguments ) ).getBytes( ) );
 	}
 
 	static public void print( final Object ... strs ) {
@@ -665,38 +672,40 @@ public class OscP5 implements Observer {
 		/* TODO , process( Map ) should be used. */
 	}
 
-	@Deprecated public static void flush( final OscMessage theOscMessage , final NetAddress theNetAddress ) {
-		flush( theOscMessage.getBytes( ) , theNetAddress );
+	@Deprecated public static boolean flush( final OscMessage theOscMessage , final NetAddress theNetAddress ) {
+		return flush( theOscMessage.getBytes( ) , theNetAddress );
 	}
 
-	@Deprecated public static void flush( final OscPacket theOscPacket , final NetAddress theNetAddress ) {
-		flush( theOscPacket.getBytes( ) , theNetAddress );
+	@Deprecated public static boolean flush( final OscPacket theOscPacket , final NetAddress theNetAddress ) {
+		return flush( theOscPacket.getBytes( ) , theNetAddress );
 	}
 
-	@Deprecated public static void flush( final String theAddrPattern , final Object[] theArguments , final NetAddress theNetAddress ) {
-		flush( ( new OscMessage( theAddrPattern , theArguments ) ).getBytes( ) , theNetAddress );
+	@Deprecated public static boolean flush( final String theAddrPattern , final Object[] theArguments , final NetAddress theNetAddress ) {
+		return flush( ( new OscMessage( theAddrPattern , theArguments ) ).getBytes( ) , theNetAddress );
 	}
 
-	@Deprecated public static void flush( final byte[] theBytes , final NetAddress theNetAddress ) {
+	@Deprecated public static boolean flush( final byte[] theBytes , final NetAddress theNetAddress ) {
 		DatagramSocket mySocket;
 		try {
 			mySocket = new DatagramSocket( );
 
 			DatagramPacket myPacket = new DatagramPacket( theBytes , theBytes.length , theNetAddress.inetaddress( ) , theNetAddress.port( ) );
 			mySocket.send( myPacket );
+			return true;
 		} catch ( SocketException e ) {
 			LOGGER.warning( "OscP5.openSocket, can't create socket " + e.getMessage( ) );
 		} catch ( IOException e ) {
 			LOGGER.warning( "OscP5.openSocket, can't create multicastSocket " + e.getMessage( ) );
 		}
+		return false;
 	}
 
-	@Deprecated public static void flush( final byte[] theBytes , final String theAddress , final int thePort ) {
-		flush( theBytes , new NetAddress( theAddress , thePort ) );
+	@Deprecated public static boolean flush( final byte[] theBytes , final String theAddress , final int thePort ) {
+		return flush( theBytes , new NetAddress( theAddress , thePort ) );
 	}
 
-	@Deprecated public static void flush( final OscMessage theOscMessage , final String theAddress , final int thePort ) {
-		flush( theOscMessage.getBytes( ) , new NetAddress( theAddress , thePort ) );
+	@Deprecated public static boolean flush( final OscMessage theOscMessage , final String theAddress , final int thePort ) {
+		return flush( theOscMessage.getBytes( ) , new NetAddress( theAddress , thePort ) );
 	}
 
 	@Deprecated public OscP5( final Object theParent , final String theHost , final int theSendToPort , final int theReceiveAtPort , final String theMethodName ) {
@@ -729,55 +738,55 @@ public class OscP5 implements Observer {
 		parent = theParent;
 	}
 
-	@Deprecated public void send( final String theAddrPattern , final Object[] theArguments , final NetAddress theNetAddress ) {
+	//@Deprecated public void send( final String theAddrPattern , final Object[] theArguments , final NetAddress theNetAddress ) {
 		/* TODO */
 		// _myOscNetManager.send( theAddrPattern , theArguments , theNetAddress );
-	}
+	//}
 
-	@Deprecated public void send( final String theAddrPattern , final Object[] theArguments , final NetAddressList theNetAddressList ) {
+	//@Deprecated public void send( final String theAddrPattern , final Object[] theArguments , final NetAddressList theNetAddressList ) {
 		/* TODO */
 		// _myOscNetManager.send( theAddrPattern , theArguments , theNetAddressList );
+	//}
+
+	@Deprecated public boolean send( final String theAddrPattern , final Object[] theArguments , final String theAddress , int thePort ) {
+		return transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) , theAddress , thePort );
 	}
 
-	@Deprecated public void send( final String theAddrPattern , final Object[] theArguments , final String theAddress , int thePort ) {
-		transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) , theAddress , thePort );
+	@Deprecated public boolean send( final String theAddrPattern , final Object[] theArguments , final TcpClient theClient ) {
+		return send( new OscMessage( theAddrPattern , theArguments ) , theClient );
 	}
 
-	@Deprecated public void send( final String theAddrPattern , final Object[] theArguments , final TcpClient theClient ) {
-		send( new OscMessage( theAddrPattern , theArguments ) , theClient );
+	@Deprecated public boolean send( final OscPacket thePacket , final NetAddress theNetAddress ) {
+		return send( theNetAddress , thePacket );
 	}
 
-	@Deprecated public void send( final OscPacket thePacket , final NetAddress theNetAddress ) {
-		send( theNetAddress , thePacket );
-	}
-
-	@Deprecated public void send( final OscPacket thePacket , final NetAddressList theNetAddressList ) {
+	//@Deprecated public void send( final OscPacket thePacket , final NetAddressList theNetAddressList ) {
 		/* TODO */
 		// _myOscNetManager.send( thePacket , theNetAddressList );
+	//}
+
+	@Deprecated public boolean send( final String theAddress , final int thePort , final String theAddrPattern , final Object ... theArguments ) {
+		return transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) , theAddress , thePort );
 	}
 
-	@Deprecated public void send( final String theAddress , final int thePort , final String theAddrPattern , final Object ... theArguments ) {
-		transmit.send( new OscMessage( theAddrPattern , theArguments ).getBytes( ) , theAddress , thePort );
-	}
+	//@Deprecated public void send( final OscPacket thePacket , final TcpClient theClient ) {
+	//}
 
-	@Deprecated public void send( final OscPacket thePacket , final TcpClient theClient ) {
-	}
-
-	public void send( final NetAddressList theNetAddressList , final OscPacket thePacket ) {
+	//public void send( final NetAddressList theNetAddressList , final OscPacket thePacket ) {
 		/* TODO */
 		// _myOscNetManager.send( thePacket , theNetAddressList );
-	}
+	//}
 
-	public void send( final NetAddressList theNetAddressList , final String theAddrPattern , final Object ... theArguments ) {
+	//public void send( final NetAddressList theNetAddressList , final String theAddrPattern , final Object ... theArguments ) {
 		/* TODO */
 		// _myOscNetManager.send( theNetAddressList , theAddrPattern , theArguments );
-	}
+	//}
 
-	@Deprecated public static void setLogStatus( final int theIndex , final int theValue ) {
-	}
+	//@Deprecated public static void setLogStatus( final int theIndex , final int theValue ) {
+	//}
 
-	@Deprecated public static void setLogStatus( final int theValue ) {
-	}
+	//@Deprecated public static void setLogStatus( final int theValue ) {
+	//}
 
 	@Deprecated public NetInfo netInfo( ) {
 		return new NetInfo( );

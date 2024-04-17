@@ -612,12 +612,12 @@ public class OscP5 implements Observer {
 		send( theClient , new OscMessage( theAddrPattern , theArguments ) );
 	}
 
-	public void send( final String theHost , final int thePort , final OscPacket thePacket ) {
-		transmit.send( thePacket.getBytes( ) , theHost , thePort );
+	public boolean send( final String theHost , final int thePort , final OscPacket thePacket ) {
+		return transmit.send( thePacket.getBytes( ) , theHost , thePort );
 	}
 
-	public void send( final OscPacket thePacket , final String theHost , final int thePort ) {
-		transmit.send( thePacket.getBytes( ) , theHost , thePort );
+	public boolean send( final OscPacket thePacket , final String theHost , final int thePort ) {
+		return transmit.send( thePacket.getBytes( ) , theHost , thePort );
 	}
 
 	/**

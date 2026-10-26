@@ -49,6 +49,7 @@ public class OscBundle extends OscPacket {
 		_myMessageSize = parseBundle( m );
 		_myRef = m.get( "socket-ref" );
 		hostAddress = s( m.get( "socket-address" ) , null );
+		inetAddress = toInetAddress( hostAddress );
 		port = i( m.get( "socket-port" ) , 0 );
 		localPort = i( m.get( "local-port" ) , 0 );
 	}

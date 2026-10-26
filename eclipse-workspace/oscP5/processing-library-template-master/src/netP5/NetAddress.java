@@ -66,7 +66,7 @@ public class NetAddress {
 
 	public NetAddress( InetAddress theInetAddress , int thePort ) {
 		inetaddress = theInetAddress;
-		hostAddress = inetaddress.getHostAddress( );
+		hostAddress = ( theInetAddress != null ) ? theInetAddress.getHostAddress( ) : null;
 		port = thePort;
 	}
 

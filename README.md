@@ -11,6 +11,7 @@ By https://github.com/trackme518 :
 * modified the library so you can have multiple apps listening on the same port (currently working for UdpServer version only )
 * changed return type of send() function from void to boolean to indicate success / failure (in OscP5.java)
 * added new function oscP5.isServerRunning() to indicate if the udp server is listening or failed
+* fixed `netAddress()` NullPointerException for received messages by resolving `inetAddress` from the sender address
 
 ```
 public String getIP( ) {

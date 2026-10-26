@@ -26,6 +26,7 @@
 package oscP5;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 
@@ -51,6 +52,17 @@ public abstract class OscPacket extends OscPatcher {
 	protected int port = 0;
 
 	protected int localPort = 0;
+
+	protected static InetAddress toInetAddress( String theAddress ) {
+		if ( theAddress == null ) {
+			return null;
+		}
+		try {
+			return InetAddress.getByName( theAddress );
+		} catch ( UnknownHostException e ) {
+			return null;
+		}
+	}
 
 	static protected OscPacket parse( Map m ) {
 
@@ -101,7 +113,10 @@ public abstract class OscPacket extends OscPatcher {
 	}
 
 	public NetAddress netAddress( ) {
-		return new NetAddress( inetAddress , port );
+		if ( inetAddress != null ) {
+			return new NetAddress( inetAddress , port );
+		}
+		return new NetAddress( hostAddress , port );
 	}
 
 	public String getAddress( ) {
@@ -112,7 +127,7 @@ public abstract class OscPacket extends OscPatcher {
 
 	@Deprecated
 	public NetAddress netaddress( ) {
-		return new NetAddress( inetAddress , port );
+		return netAddress( );
 	}
 
 }
